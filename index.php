@@ -44,7 +44,7 @@ if (isset($_POST["login"])) {
         <?php endif; ?>
 
         <p class="auth-link">
-            Don’t have an account?
+            Don’t have an account??
             <a href="register.php">Create one</a>
         </p>
     </div>

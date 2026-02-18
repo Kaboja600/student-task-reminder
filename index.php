@@ -2,7 +2,7 @@
 include "db.php";
 
 if (isset($_POST["login"])) {
-    $username = $_POST["username"];
+    $username = trim($_POST["username"]);
     $password = $_POST["password"];
 
     $stmt = $conn->prepare("SELECT * FROM users WHERE username=?");
@@ -11,11 +11,12 @@ if (isset($_POST["login"])) {
     $user = $stmt->get_result()->fetch_assoc();
 
     if ($user && password_verify($password, $user["password"])) {
-        $_SESSION["user_id"] = $user["id"];
+        $_SESSION["user_id"]  = $user["id"];
         $_SESSION["username"] = $user["username"];
         header("Location: dashboard.php");
+        exit();
     } else {
-        $error = "Wrong login details";
+        $error = "Wrong username or password.";
     }
 }
 ?>
@@ -24,27 +25,30 @@ if (isset($_POST["login"])) {
 
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – TaskFlow</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="auth-page">
 
     <div class="auth-card">
+        <a href="landing.php" class="brand-link">Task<span>Flow</span></a>
         <h2>Welcome Back</h2>
+        <p class="subtitle">Log in to your account</p>
 
         <form method="POST">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit" name="login">Login</button>
+            <input type="text" name="username" placeholder="Username" required autocomplete="username">
+            <input type="password" name="password" placeholder="Password" required autocomplete="current-password">
+            <button type="submit" name="login">Log In</button>
         </form>
 
-        <?php if(isset($error)): ?>
-        <div class="error"><?= $error ?></div>
+        <?php if (isset($error)): ?>
+        <div class="error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
         <p class="auth-link">
-            Don’t have an account??
+            Don't have an account?
             <a href="register.php">Create one</a>
         </p>
     </div>
